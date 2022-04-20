@@ -1,42 +1,45 @@
-%Example dose split script
+function [Dabs,path_output] = mixA_B(pathA, pathB, i_percentage, path_output)
+    %Example dose split script
 
-% import functions --------------------------------------------------------
-path_mainscript = fileparts(mfilename('fullpath'))
-addpath(path_mainscript)
+    % import functions --------------------------------------------------------
+    path_mainscript = fileparts(mfilename('fullpath'))
+    addpath(path_mainscript)
 
-%Input values--------------------------------------------------------------
-% 66% image
-pathA = "C:\Users\nembe\Downloads\andre\Dual_Split_Test_For_Bence\Dual_Split_Test_For_Bence\66\PP Lunge Inspi 1.5  Bl64  3 LCAD  A_100kV"
-Da = 100; %Dose for Series A (could use units of CTDI or effective mAs). Assuming series A is the high dose scan
+    %Input values--------------------------------------------------------------
+    % 66% image
+    pathA = "C:\Users\nembe\Downloads\andre\Dual_Split_Test_For_Bence\Dual_Split_Test_For_Bence\66\PP Lunge Inspi 1.5  Bl64  3 LCAD  A_100kV"
+    Da = 100; %Dose for Series A (could use units of CTDI or effective mAs). Assuming series A is the high dose scan
 
-% 33% image
-pathB = "C:\Users\nembe\Downloads\andre\Dual_Split_Test_For_Bence\Dual_Split_Test_For_Bence\33\PP Lunge Inspi 1.5  Bl64  3 LCAD  B_100kV\"
-Db = 50;  %Dose for Series A (could use units of CTDI or effective mAs)
+    % 33% image
+    pathB = "C:\Users\nembe\Downloads\andre\Dual_Split_Test_For_Bence\Dual_Split_Test_For_Bence\33\PP Lunge Inspi 1.5  Bl64  3 LCAD  B_100kV\"
+    Db = 50;  %Dose for Series A (could use units of CTDI or effective mAs)
 
-pathOutput = ""
-if (pathOutput == "")
-    pathOutput = fullfile(pathA, '..', '..')
-end
+    pathOutput = ""
+    if (pathOutput == "")
+        pathOutput = fullfile(pathA, '..')
+    end
 
-% Da = 150; %Dose for Series A (could use units of CTDI or effective mAs). Assuming series A is the high dose scan
-% Db = 50;  %Dose for Series A (could use units of CTDI or effective mAs)
-% Dt = .50; %Targeted dose level as a fraction of (Da + Db) (should be a fraction between Db/(Da+Db) and 1)
+    % Da = 150; %Dose for Series A (could use units of CTDI or effective mAs). Assuming series A is the high dose scan
+    % Db = 50;  %Dose for Series A (could use units of CTDI or effective mAs)
+    % Dt = .50; %Targeted dose level as a fraction of (Da + Db) (should be a fraction between Db/(Da+Db) and 1)
 
-%Input values--------------------------------------------------------------
-%Calculate the targeted dose
-% Dab = (Da + Db)*Dt;
+    %Input values--------------------------------------------------------------
+    %Calculate the targeted dose
+    % Dab = (Da + Db)*Dt;
 
-% list of targeted dose 
-% Dabs = [50, 65, 80 , 95, 110, 135, 150]
-% listPercentages = [40, 50, 60, 66, 70 , 80, 90, 100]
-listPercentages = 40:10:100
-Dabs = (Da + Db)*desiredPercentages / 100
-
-disp("Series with following Dosis will be calculated:", num2str(Dabs))
-
-for i=1:length(Dabs)
-    Dab = Dabs(i)
-    i_percentage = listPercentages(i)
+    % list of targeted dose 
+    % Dabs = [50, 65, 80 , 95, 110, 135, 150]
+    % listPercentages = [40, 50, 60, 66, 70 , 80, 90, 100]
+    %listPercentages = 40:10:100
+    
+    %Dabs = (Da + Db)*desiredPercentages / 100
+    Dab = (Da + Db)*desired_percentage / 100
+%     disp("Series with following Dosis will be calculated:", num2str(Dabs))
+%     disp("Series with following Dosis will be calculated:", num2str(Dab))
+% 
+% 
+%     Dab = Dabs(i)
+%     i_percentage = listPercentages(i)
     %Calculate the blending weight needed to get that dose level
     if Dab < min(Db,Da)
         warning('Targeted dose level is lower than your lowest dose input image')
@@ -49,13 +52,13 @@ for i=1:length(Dabs)
     %Read in the images
     [im_a, infoA]=readCTSeries(pathA);
     [im_b, infoB]=readCTSeries(pathB);
-    
+
     %Compute the blended image
     im_ab = w*im_a + (1-w)*im_b;
-    
+
     % check and create the folder if not exists
     outputfolder = fullfile(pathOutput, strcat('dose_',num2str(i_percentage))); 
- 
+
     if ~exist(outputfolder, 'dir')
        mkdir(outputfolder)
     end
