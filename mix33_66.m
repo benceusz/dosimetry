@@ -1,22 +1,22 @@
-function [Dabs,path_output] = mixA_B(pathA, pathB, i_percentage, path_output)
+function [Dabs] = mix33_66(path33,path66, i_percentage, path_outputdir)
     %Example dose split script
-
+    
     % import functions --------------------------------------------------------
     path_mainscript = fileparts(mfilename('fullpath'))
     addpath(path_mainscript)
 
     %Input values--------------------------------------------------------------
     % 66% image
-    pathA = "C:\Users\nembe\Downloads\andre\Dual_Split_Test_For_Bence\Dual_Split_Test_For_Bence\66\PP Lunge Inspi 1.5  Bl64  3 LCAD  A_100kV"
+    % path66 = "C:\Users\nembe\Downloads\andre\Dual_Split_Test_For_Bence\Dual_Split_Test_For_Bence\66\PP Lunge Inspi 1.5  Bl64  3 LCAD  A_100kV"
     Da = 100; %Dose for Series A (could use units of CTDI or effective mAs). Assuming series A is the high dose scan
 
     % 33% image
-    pathB = "C:\Users\nembe\Downloads\andre\Dual_Split_Test_For_Bence\Dual_Split_Test_For_Bence\33\PP Lunge Inspi 1.5  Bl64  3 LCAD  B_100kV\"
+    %path33 = "C:\Users\nembe\Downloads\andre\Dual_Split_Test_For_Bence\Dual_Split_Test_For_Bence\33\PP Lunge Inspi 1.5  Bl64  3 LCAD  B_100kV\"
     Db = 50;  %Dose for Series A (could use units of CTDI or effective mAs)
 
-    pathOutput = ""
     if (pathOutput == "")
-        pathOutput = fullfile(pathA, '..')
+        pathOutput = fullfile(path66, '..')
+        disp("No outputpath_dir argument. Input path has been set to output path")
     end
 
     % Da = 150; %Dose for Series A (could use units of CTDI or effective mAs). Assuming series A is the high dose scan
@@ -50,14 +50,14 @@ function [Dabs,path_output] = mixA_B(pathA, pathB, i_percentage, path_output)
     disp(['Dose from calculated weighting factor: ' num2str(Dab_check)])
 
     %Read in the images
-    [im_a, infoA]=readCTSeries(pathA);
-    [im_b, infoB]=readCTSeries(pathB);
+    [im_a, infoA]=readCTSeries(path66);
+    [im_b, infoB]=readCTSeries(path33);
 
     %Compute the blended image
     im_ab = w*im_a + (1-w)*im_b;
 
     % check and create the folder if not exists
-    outputfolder = fullfile(pathOutput, strcat('dose_',num2str(i_percentage))); 
+    outputfolder = fullfile(pathOutput, strcat(num2str(i_percentage), 'from33_66')); 
 
     if ~exist(outputfolder, 'dir')
        mkdir(outputfolder)
