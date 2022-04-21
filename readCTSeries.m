@@ -18,7 +18,7 @@ function [I info]=readCTSeries(varargin)
 %
 %   Written by Justin Solomon, Oct 20, 2014
 
-
+warning off verbose
 old_dir=pwd;
 
 switch nargin

@@ -3,6 +3,7 @@ import os
 import shutil
 import numpy as np
 
+
 project_dir = "/media/nraresearch/Elements/Dual_Split_Projekt_ETH/Anonmyized_final_dual_split"
 output_dir = "/media/nraresearch/Elements/Dual_Split_Projekt_ETH/preprocessed_dual_split"
 
@@ -10,6 +11,9 @@ list_studies = [ name for name in os.listdir(project_dir) if os.path.isdir(os.pa
 
 if not os.path.isdir(output_dir):
     os.mkdir(output_dir)
+    
+    
+    
 
 # functions 
 
@@ -40,24 +44,33 @@ def copy_dcm_file(source, destination):
     return
 
 
-
 for i_dir in list_studies:
     #i_dir = "10"
 
     path_out_patient = os.path.join(output_dir, i_dir)
     path_in_patient = os.path.join(project_dir, i_dir)
 
-    if os.path.isdir(path_out_patient):
-        print("patient %s exist"%i_dir)
-        continue
-    else:
-        os.mkdir(path_out_patient)
-        
+    if not os.path.isdir(path_out_patient): os.mkdir(path_out_patient)
     
     print("processing study: %s" % i_dir)
-    if not os.path.isdir(os.path.join(path_out_patient,"33")): os.mkdir(os.path.join(path_out_patient,"33"))
-    if not os.path.isdir(os.path.join(path_out_patient,"66")): os.mkdir(os.path.join(path_out_patient,"66"))
-    if not os.path.isdir(os.path.join(path_out_patient,"100")): os.mkdir(os.path.join(path_out_patient,"100"))
+    if not os.path.isdir(os.path.join(path_out_patient,"33")):
+        os.mkdir(os.path.join(path_out_patient,"33"))
+    else:
+        if os.listdir(os.path.join(path_out_patient,"33")):
+            continue
+        
+    if not os.path.isdir(os.path.join(path_out_patient,"66")):
+        os.mkdir(os.path.join(path_out_patient,"66"))
+    else:
+        if os.listdir(os.path.join(path_out_patient,"66")):
+            continue
+        
+    if not os.path.isdir(os.path.join(path_out_patient,"100")):
+        os.mkdir(os.path.join(path_out_patient,"100"))
+    else:
+        if os.listdir(os.path.join(path_out_patient,"100")):
+            continue
+        
 
     print(path_in_patient)
     counter = 0
