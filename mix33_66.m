@@ -1,6 +1,6 @@
-function [Dabs] = mix33_66(path33,path66, i_percentage, path_outputdir)
+function [Dabs, path_generated_sequence] = mix33_66(path33,path66, i_percentage, path_outputdir)
     %Example dose split script
-    
+    warning off verbose
     % import functions --------------------------------------------------------
     path_mainscript = fileparts(mfilename('fullpath'))
     addpath(path_mainscript)
@@ -14,8 +14,8 @@ function [Dabs] = mix33_66(path33,path66, i_percentage, path_outputdir)
     %path33 = "C:\Users\nembe\Downloads\andre\Dual_Split_Test_For_Bence\Dual_Split_Test_For_Bence\33\PP Lunge Inspi 1.5  Bl64  3 LCAD  B_100kV\"
     Db = 50;  %Dose for Series A (could use units of CTDI or effective mAs)
 
-    if (pathOutput == "")
-        pathOutput = fullfile(path66, '..')
+    if (path_outputdir == "")
+        path_outputdir = fullfile(path66, '..');
         disp("No outputpath_dir argument. Input path has been set to output path")
     end
 
@@ -33,7 +33,7 @@ function [Dabs] = mix33_66(path33,path66, i_percentage, path_outputdir)
     %listPercentages = 40:10:100
     
     %Dabs = (Da + Db)*desiredPercentages / 100
-    Dab = (Da + Db)*desired_percentage / 100
+    Dab = (Da + Db)* i_percentage / 100;
 %     disp("Series with following Dosis will be calculated:", num2str(Dabs))
 %     disp("Series with following Dosis will be calculated:", num2str(Dab))
 % 
@@ -49,20 +49,25 @@ function [Dabs] = mix33_66(path33,path66, i_percentage, path_outputdir)
     disp(['Requested dose: ' num2str(Dab)])
     disp(['Dose from calculated weighting factor: ' num2str(Dab_check)])
 
-    %Read in the images
-    [im_a, infoA]=readCTSeries(path66);
-    [im_b, infoB]=readCTSeries(path33);
-
-    %Compute the blended image
-    im_ab = w*im_a + (1-w)*im_b;
-
     % check and create the folder if not exists
-    outputfolder = fullfile(pathOutput, strcat(num2str(i_percentage), 'from33_66')); 
+    path_generated_sequence = fullfile(path_outputdir, strcat(num2str(i_percentage), 'from33_66')) 
 
-    if ~exist(outputfolder, 'dir')
-       mkdir(outputfolder)
+    if ~exist(path_generated_sequence, 'dir')
+        %Read in the images
+        [im_a, infoA]=readCTSeries(path66);
+        [im_b, infoB]=readCTSeries(path33);
+
+        %Compute the blended image
+        im_ab = w*im_a + (1-w)*im_b;
+
+
+        if ~exist(path_generated_sequence, 'dir')
+           mkdir(path_generated_sequence)
+        end
+        disp(['Output folder: ' path_generated_sequence]); 
+
+        writeDicoms(path_generated_sequence, im_ab, infoA);
+    else
+        disp(["The requested image already exist.", path_generated_sequence," Skipping loop. Turn flag_overwrite to True if you want to overwrite"])
     end
-    disp(['Output folder: ' outputfolder]); 
-
-    writeDicoms(outputfolder, im_ab, infoA); 
 end
