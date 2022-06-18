@@ -58,7 +58,9 @@ function [Dab, path_generated_sequence] = mix_da_db(pathB, Db, pathA, Da, i_perc
 
     if ~exist(path_generated_sequence, 'dir')
         %Read in the images
+        disp("reading ct a")
         [im_a, infoA]=readCTSeries(pathA);
+        disp("reading ct B")
         [im_b, infoB]=readCTSeries(pathB);
 
         %Compute the blended image
