@@ -1,4 +1,4 @@
-function [Dab, path_generated_sequence] = mix_da_db(pathB, Db, pathA, Da, i_percentage, path_outputdir)
+function [Dab, path_generated_sequence] = mix_da_db(im_b, Db, im_a, Da, infoA, i_percentage, path_outputdir)
     %Example dose split script
     warning off verbose
     % import functions --------------------------------------------------------
@@ -53,27 +53,19 @@ function [Dab, path_generated_sequence] = mix_da_db(pathB, Db, pathA, Da, i_perc
     disp(['Dose from calculated weighting factor: ' num2str(Dab_check)])
 
     % check and create the folder if not exists
-    path_generated_sequence = fullfile(path_outputdir, strcat(num2str(i_percentage), "from",num2str(tag_da), "_",num2str(tag_db)));
+    % name tag is like: 44from33_66
+    name_tag = strcat(num2str(i_percentage), "from",num2str(tag_da), "_",num2str(tag_db))
+    path_generated_sequence = fullfile(path_outputdir, name_tag);
     disp(path_generated_sequence)
+        
+    %Compute the blended image
+    im_ab = w*im_a + (1-w)*im_b;
 
     if ~exist(path_generated_sequence, 'dir')
-        %Read in the images
-        disp("reading ct a")
-        [im_a, infoA]=readCTSeries(pathA);
-        disp("reading ct B")
-        [im_b, infoB]=readCTSeries(pathB);
-
-        %Compute the blended image
-        im_ab = w*im_a + (1-w)*im_b;
-
-
-        if ~exist(path_generated_sequence, 'dir')
-           mkdir(path_generated_sequence)
-        end
-        disp(['Output folder: ' path_generated_sequence]); 
-
-        writeDicoms(path_generated_sequence, im_ab, infoA);
-    else
-        disp(["The requested image already exist.", path_generated_sequence," Skipping loop. Turn flag_overwrite to True if you want to overwrite"])
+       mkdir(path_generated_sequence)
     end
+    disp(['Output folder: ' path_generated_sequence]); 
+
+    writeDicoms(path_generated_sequence, im_ab, infoA, i_percentage);
+
 end

@@ -23,18 +23,23 @@ for i = 1:length(list_patients)
        disp(["Patient dir already exist", i_patient])
        continue
     end
+    disp(["Reading CT images:", i_patient])
+
     path_folder33 = fullfile(pathPreprocessDicoms, i_patient, "33");
     list_33  = GetSubDirsFirstLevelOnly(path_folder33);
     path33 = fullfile(path_folder33, list_33{1});
-
+    [im_33, info_33]=readCTSeries(path33);    
+    
     path_folder66 = fullfile(pathPreprocessDicoms, i_patient, "66");
     list_66  = GetSubDirsFirstLevelOnly(path_folder66);
     path66 = fullfile(path_folder66, list_66{1});
+    [im_66, info_66]=readCTSeries(path66);    
 
     path_folder100 = fullfile(pathPreprocessDicoms, i_patient, "100");
     list_100  = GetSubDirsFirstLevelOnly(path_folder100);
     path100 = fullfile(path_folder100, list_100{1});
-
+    %[im_100, info_100]=readCTSeries(path100);    
+    
     if ~exist(outputFolderPatient, 'dir')
        mkdir(outputFolderPatient)
     end
@@ -44,7 +49,8 @@ for i = 1:length(list_patients)
              i_percentage = listPercentages(p)
              disp(["processing patient:", i_patient, " with dose percentage: ", num2str(i_percentage)])
              i_percentage = listPercentages(p);
-             mix_da_db(path33, 50, path66, 100, i_percentage, outputFolderPatient);
+                        
+             mix_da_db(im_33, 50, im_66, 100, info_66, i_percentage, outputFolderPatient);
          catch
              disp(["ERROR: Crushed calculation at patient: ", outputFolderPatient])
          end
@@ -53,7 +59,7 @@ for i = 1:length(list_patients)
     % mix 33 and 100 to get 66
     disp(["processing patient:", i_patient, " with dose percentage: ", num2str(66)])
     try
-        mix_da_db(path33, 50, path100, 150, 66, outputFolderPatient);
+        mix_da_db(im_33, 50, im_100, 150, 100, info_100, outputFolderPatient);
     catch
         disp(["ERROR: Crushed calculation at patient: ", outputFolderPatient])
         %rmdir(outputFolderPatient)
@@ -61,7 +67,7 @@ for i = 1:length(list_patients)
 
     % mix 66 and 100 to get 100
     try
-        mix_da_db(path66, 100, path100, 150, 150 , outputFolderPatient);
+        mix_da_db(im_66, 100, im_100, 150, info_100, 150 , outputFolderPatient);
     catch
         disp(["ERROR: Crushed calculation at patient: ", outputFolderPatient])
         %rmdir(outputFolderPatient)
