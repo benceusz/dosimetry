@@ -25,23 +25,25 @@ for i = 1:length(list_patients)
     end
     disp(["Reading CT images:", i_patient])
 
+
+    if ~exist(outputFolderPatient, 'dir')
+       mkdir(outputFolderPatient)
+
     path_folder33 = fullfile(pathPreprocessDicoms, i_patient, "33");
     list_33  = GetSubDirsFirstLevelOnly(path_folder33);
     path33 = fullfile(path_folder33, list_33{1});
-    [im_33, info_33]=readCTSeries(path33);    
-    
+    [im_33, info_33]=readCTSeries(path33);
+
     path_folder66 = fullfile(pathPreprocessDicoms, i_patient, "66");
     list_66  = GetSubDirsFirstLevelOnly(path_folder66);
     path66 = fullfile(path_folder66, list_66{1});
-    [im_66, info_66]=readCTSeries(path66);    
+    [im_66, info_66]=readCTSeries(path66);
 
     path_folder100 = fullfile(pathPreprocessDicoms, i_patient, "100");
     list_100  = GetSubDirsFirstLevelOnly(path_folder100);
     path100 = fullfile(path_folder100, list_100{1});
-    %[im_100, info_100]=readCTSeries(path100);    
-    
-    if ~exist(outputFolderPatient, 'dir')
-       mkdir(outputFolderPatient)
+    %[im_100, info_100]=readCTSeries(path100);
+
     end
 
      for p = 1:length(listPercentages)
@@ -49,7 +51,7 @@ for i = 1:length(list_patients)
              i_percentage = listPercentages(p)
              disp(["processing patient:", i_patient, " with dose percentage: ", num2str(i_percentage)])
              i_percentage = listPercentages(p);
-                        
+
              mix_da_db(im_33, 50, im_66, 100, info_66, i_percentage, outputFolderPatient);
          catch
              disp(["ERROR: Crushed calculation at patient: ", outputFolderPatient])
